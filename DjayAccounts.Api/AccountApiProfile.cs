@@ -8,14 +8,15 @@ public class AccountApiProfile : Profile
 {
     public AccountApiProfile()
     {
-        CreateMap<PaginatedResult<CustomerModel>, PaginatedResult<CustomerDto>>();
         CreateMap<CustomerModel, CustomerDto>();
 
         CreateMap<AccountModel, AccountDto>()
-            .Include<AccountModel, CurrentAccountDto>()
-            .Include<AccountModel, SavingsAccountDto>();
+            .Include<CurrentAccountModel, CurrentAccountDto>()
+            .Include<SavingsAccountModel, SavingsAccountDto>();
 
-        CreateMap<AccountModel, CurrentAccountDto>();
-        CreateMap<AccountModel, SavingsAccountDto>();
+        CreateMap<CurrentAccountModel, CurrentAccountDto>();
+        CreateMap<SavingsAccountModel, SavingsAccountDto>();
+
+        CreateMap(typeof(PaginatedResult<>), typeof(PaginatedResult<>));
     }
 }

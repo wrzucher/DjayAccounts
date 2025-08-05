@@ -220,7 +220,7 @@ public class AccountController : ControllerBase
             createdAfter,
             createdBefore,
             isFrozen);
-        var result = this.mapper.Map<PaginatedResult<CustomerDto>>(accounts);
+        var result = this.mapper.Map<PaginatedResult<AccountDto>>(accounts);
         return Ok(result);
     }
 }

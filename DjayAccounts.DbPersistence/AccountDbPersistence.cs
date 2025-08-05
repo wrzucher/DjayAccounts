@@ -64,7 +64,7 @@ public class AccountDbPersistence
             AccountId = accountId,
             CustomerId = customerId,
             AccountType = accountType.ToString().ToUpperInvariant(),
-            Currency = currency,
+            Currency = currency.ToUpperInvariant(),
             Balance = initialBalance,
             OverdraftLimit = overdraftLimit,
             Status = AccountStatus.Active.ToString().ToUpperInvariant(),
@@ -93,7 +93,7 @@ public class AccountDbPersistence
             AccountId = accountId,
             CustomerId = customerId,
             AccountType = accountType.ToString().ToUpperInvariant(),
-            Currency = currency,
+            Currency = currency.ToUpperInvariant(),
             Balance = initialBalance,
             InterestRate = interestRate,
             Status = AccountStatus.Active.ToString().ToUpperInvariant(),
@@ -218,17 +218,21 @@ public class AccountDbPersistence
 
         if (accountType.HasValue)
         {
-            query = query.Where(a => a.AccountType.Equals(accountType.ToString(), StringComparison.InvariantCultureIgnoreCase));
+            // In the better world we want to have here something like this
+            // a.Status.Equals(status.ToString(), StringComparison.InvariantCultureIgnoreCase));
+            // but in fact it can be translated to SQL
+            // so this equal should be ok
+            query = query.Where(a => a.AccountType == accountType.Value.ToString().ToUpperInvariant());
         }
 
         if (!string.IsNullOrWhiteSpace(currency))
         {
-            query = query.Where(a => a.Currency.Equals(currency, StringComparison.InvariantCultureIgnoreCase));
+            query = query.Where(a => a.Currency == currency.ToUpperInvariant());
         }
 
         if (status.HasValue)
         {
-            query = query.Where(a => a.Status.Equals(status.ToString(), StringComparison.InvariantCultureIgnoreCase));
+            query = query.Where(a => a.Status == status.Value.ToString().ToUpperInvariant());
         }
 
         if (minBalance.HasValue)

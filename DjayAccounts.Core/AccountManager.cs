@@ -1,7 +1,5 @@
 ﻿using DjayAccounts.DbPersistence;
 using DjayAccounts.DbPersistence.ObjectModels;
-using DjayAccounts.EntityFramework.Contexts;
-using Microsoft.EntityFrameworkCore;
 
 namespace DjayAccounts.Core;
 
