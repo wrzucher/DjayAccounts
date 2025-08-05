@@ -162,4 +162,70 @@ public class AccountManager
         await this._persistence.UnfreezeAccountAsync(accountId);
         return ServiceErrorCode.Ok;
     }
+
+    /// <summary>
+    /// Retrieves account details by account ID.
+    /// </summary>
+    public async Task<AccountModel?> GetAccountAsync(Guid accountId)
+    {
+        return await _persistence.GetAccountAsync(accountId);
+    }
+
+    /// <summary>
+    /// Retrieves all accounts by customer ID.
+    /// </summary>
+    public async Task<IEnumerable<AccountModel>> GetAccountsByCustomerIdAsync(Guid customerId)
+    {
+        return await _persistence.GetAccountsByCustomerIdAsync(customerId);
+    }
+
+    /// <summary>
+    /// Retrieves customer details by customer ID.
+    /// </summary>
+    public async Task<CustomerModel?> GetCustomerByIdAsync(Guid customerId)
+    {
+        return await _persistence.GetCustomerByIdAsync(customerId);
+    }
+
+    /// <summary>
+    /// Retrieves customers details with pagination and filters.
+    /// </summary>
+    public async Task<PaginatedResult<CustomerModel>> GetCustomersAsync(
+        string? firstNameFilter,
+        string? lastNameFilter,
+        int page,
+        int pageSize)
+    {
+        return await _persistence.GetCustomersAsync(firstNameFilter, lastNameFilter, page, pageSize);
+    }
+
+    /// <summary>
+    /// Retrieves accounts with pagination and optional filters.
+    /// </summary>
+    public async Task<PaginatedResult<AccountModel>> GetAccountsAsync(
+        int page,
+        int pageSize,
+        Guid? customerId,
+        AccountType? accountType,
+        string? currency,
+        AccountStatus? status,
+        decimal? minBalance,
+        decimal? maxBalance,
+        DateTime? createdAfter,
+        DateTime? createdBefore,
+        bool? isFrozen)
+    {
+        return await _persistence.GetAccountsAsync(
+            page,
+            pageSize,
+            customerId,
+            accountType,
+            currency,
+            status,
+            minBalance,
+            maxBalance,
+            createdAfter,
+            createdBefore,
+            isFrozen);
+    }
 }
