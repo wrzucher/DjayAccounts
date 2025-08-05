@@ -8,6 +8,8 @@ public class AccountProfile : Profile
 {
     public AccountProfile()
     {
+        CreateMap<Customer, CustomerModel>();
+
         CreateMap<Account, AccountModel>()
             .Include<Account, CurrentAccountModel>()
             .Include<Account, SavingsAccountModel>()
