@@ -12,17 +12,14 @@ namespace DjayAccounts.Core;
 public class AccountManager
 {
     private readonly AccountDbPersistence _persistence;
-    private readonly DbContextOptions<AccountDbContext> _options;
 
     /// <summary>
     /// Initializes a new instance of GameManager.
     /// </summary>
     /// <param name="persistence">Persistence layer for database access.</param>
-    /// <param name="options">Database context options.</param>
-    public AccountManager(AccountDbPersistence persistence, DbContextOptions<AccountDbContext> options)
+    public AccountManager(AccountDbPersistence persistence)
     {
         this._persistence = persistence;
-        this._options = options;
     }
 
     /// <summary>
@@ -76,7 +73,12 @@ public class AccountManager
         }
 
         await this._persistence.CreateCurrentAccountAsync(
-            accountId, customerId, AccountType.Current, currency, initialBalance, overdraftLimit);
+            accountId,
+            customerId,
+            AccountType.Current,
+            currency,
+            initialBalance,
+            overdraftLimit);
 
         return ServiceErrorCode.Ok;
     }
@@ -158,63 +160,6 @@ public class AccountManager
         }
 
         await this._persistence.UnfreezeAccountAsync(accountId);
-        return ServiceErrorCode.Ok;
-    }
-
-    /// <summary>
-    /// Withdraws money from an account if balance is sufficient.
-    /// </summary>
-    /// <param name="accountId">Unique identifier for the account.</param>
-    /// <param name="amount">Amount of money to withdraw.</param>
-    public async Task<ServiceErrorCode> WithdrawAsync(Guid accountId, decimal amount)
-    {
-        var account = await this._persistence.GetAccountAsync(accountId);
-        if (account == null)
-        {
-            return ServiceErrorCode.AccountNotFound;
-        }
-
-        if (account.Status != AccountStatus.Active)
-        {
-            return ServiceErrorCode.AccountClosed;
-        }
-
-        if (account.Balance < amount)
-        {
-            return ServiceErrorCode.InsufficientFunds;
-        }
-
-        using var context = new AccountDbContext(this._options);
-        var entity = await context.Accounts.FirstAsync(a => a.AccountId == accountId);
-        entity.Balance -= amount;
-        await context.SaveChangesAsync();
-
-        return ServiceErrorCode.Ok;
-    }
-
-    /// <summary>
-    /// Deposits money into an account.
-    /// </summary>
-    /// <param name="accountId">Unique identifier for the account.</param>
-    /// <param name="amount">Amount of money to deposit.</param>
-    public async Task<ServiceErrorCode> DepositAsync(Guid accountId, decimal amount)
-    {
-        var account = await this._persistence.GetAccountAsync(accountId);
-        if (account == null)
-        {
-            return ServiceErrorCode.AccountNotFound;
-        }
-
-        if (account.Status != AccountStatus.Active)
-        {
-            return ServiceErrorCode.AccountClosed;
-        }
-
-        using var context = new AccountDbContext(this._options);
-        var entity = await context.Accounts.FirstAsync(a => a.AccountId == accountId);
-        entity.Balance += amount;
-        await context.SaveChangesAsync();
-
         return ServiceErrorCode.Ok;
     }
 }
