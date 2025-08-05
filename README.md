@@ -13,6 +13,8 @@ API to be used to manage accounts within a bank.
 ## Notes
 
 - This is a stateless service: it does not keep any session data in memory.
-- Project structure is simple, as we do not expect high load and we do not have a such requirement.
+- The project structure is simple, as we do not expect a high load and do not have such a requirement.
 - Idempotency is handled with external AccountId and ClientId.
-- Easy to scale later if needed, since it is stateless and uses standard REST design.
+- It will be easy to scale later if needed, since it is stateless and follows standard REST design principles.
+- Actually, I forgot that AutoMapper changed its license, so it is better to use another library.
+- Authorization was not added because I did not see it in the requirements. It’s not a big deal to add it — just ask me.
