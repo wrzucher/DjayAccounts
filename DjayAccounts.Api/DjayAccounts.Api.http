@@ -1,0 +1,6 @@
+@DjayAccounts.Api_HostAddress = http://localhost:5201
+
+GET {{DjayAccounts.Api_HostAddress}}/accounts/
+Accept: application/json
+
+###
