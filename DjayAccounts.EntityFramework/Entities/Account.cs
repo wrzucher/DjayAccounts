@@ -51,4 +51,14 @@ public class Account
     /// Null if the account is not frozen.
     /// </summary>
     public DateTime? FrozenAt { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value that defines the overdraft limit for this current account.
+    /// </summary>
+    public decimal? OverdraftLimit { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value that defines the interest rate for this savings account.
+    /// </summary>
+    public decimal? InterestRate { get; set; }
 }

@@ -6,7 +6,7 @@ using System;
 /// Represents a customer in the banking system.
 /// Each customer can own one or more accounts.
 /// </summary>
-public class Customer
+public class CustomerModel
 {
     /// <summary>
     /// Gets or sets a value that uniquely identifies the customer.

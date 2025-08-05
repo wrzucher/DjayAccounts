@@ -4,7 +4,7 @@
 /// Represents a bank account owned by a customer.
 /// Accounts can be of different types (e.g., Current, Savings).
 /// </summary>
-public class Account
+public abstract class AccountModel
 {
     /// <summary>
     /// Gets or sets a value that uniquely identifies the account.

@@ -1,11 +1,8 @@
-﻿using DjayAccounts.DbPersistence.Contexts;
-using DjayAccounts.DbPersistence.Entities;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DjayAccounts.DbPersistence.ObjectModels;
+using DjayAccounts.EntityFramework.Contexts;
+using DjayAccounts.EntityFramework.Entities;
 
 namespace DjayAccounts.DbPersistence;
 
@@ -32,14 +29,15 @@ public class AccountDbPersistence
     /// <summary>
     /// Creates a new customer record.
     /// </summary>
-    public async Task<CustomerModel> CreateCustomerAsync(Guid customerId, string fullName)
+    public async Task<CustomerModel> CreateCustomerAsync(Guid customerId, string firstName, string lastName)
     {
         using var context = new AccountDbContext(_options);
 
         var customer = new Customer
         {
             CustomerId = customerId,
-            FullName = fullName,
+            FirstName = firstName,
+            LastName = lastName,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -52,7 +50,12 @@ public class AccountDbPersistence
     /// <summary>
     /// Creates a new account for a given customer.
     /// </summary>
-    public async Task<AccountModel> CreateAccountAsync(Guid accountId, Guid customerId, string accountType, string currency, decimal initialBalance)
+    public async Task<AccountModel> CreateAccountAsync(
+        Guid accountId,
+        Guid customerId,
+        AccountType accountType,
+        string currency,
+        decimal initialBalance)
     {
         using var context = new AccountDbContext(_options);
 
@@ -60,17 +63,18 @@ public class AccountDbPersistence
         {
             AccountId = accountId,
             CustomerId = customerId,
-            AccountType = accountType,
+            AccountType = accountType.ToString().ToUpperInvariant(),
             Currency = currency,
             Balance = initialBalance,
-            Status = "ACTIVE",
+            Status = AccountStatus.Active.ToString().ToUpperInvariant(),
             CreatedAt = DateTime.UtcNow
         };
 
         context.Accounts.Add(account);
         await context.SaveChangesAsync();
 
-        return MapAccountToBusiness(account);
+        var result = _mapper.Map<AccountModel>(account);
+        return result;
     }
 
     /// <summary>
@@ -84,7 +88,8 @@ public class AccountDbPersistence
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.AccountId == accountId);
 
-        return account == null ? null : MapAccountToBusiness(account);
+        var result = _mapper.Map<AccountModel>(account);
+        return result;
     }
 
     /// <summary>
@@ -94,27 +99,16 @@ public class AccountDbPersistence
     {
         using var context = new AccountDbContext(_options);
 
-        var account = await context.Accounts.FirstOrDefaultAsync(a => a.AccountId == accountId);
+        var account = await context.Accounts
+            .FirstOrDefaultAsync(a => a.AccountId == accountId);
         if (account == null) return null;
 
-        account.Status = "FROZEN";
+        account.Status = AccountStatus.Frozen.ToString().ToUpperInvariant();
         account.FrozenAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
 
-        return MapAccountToBusiness(account);
-    }
-
-    /// <summary>
-    /// Maps an EF Account entity to the appropriate business model.
-    /// </summary>
-    private AccountModel MapAccountToBusiness(Account account)
-    {
-        return account.AccountType.ToUpper() switch
-        {
-            "SAVINGS" => _mapper.Map<SavingsAccountModel>(account),
-            "CURRENT" => _mapper.Map<CurrentAccountModel>(account),
-            _ => _mapper.Map<AccountModel>(account)
-        };
+        var result = _mapper.Map<AccountModel>(account);
+        return result;
     }
 }
