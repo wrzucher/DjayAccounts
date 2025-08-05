@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DjayAccounts.Api", "DjayAccounts.Api\DjayAccounts.Api.csproj", "{DBDE268D-5830-4489-9B59-148B894BC103}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DjayAccounts.Api", "DjayAccounts.Api\DjayAccounts.Api.csproj", "{DBDE268D-5830-4489-9B59-148B894BC103}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5A3F827B-6B84-4EB7-9D5F-9F6E1EC09189}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
