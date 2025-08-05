@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using DjayAccounts.Api.Models;
 using DjayAccounts.DbPersistence.ObjectModels;
-using DjayAccounts.EntityFramework.Entities;
 
 namespace DjayAccounts.Api;
 
@@ -9,6 +8,7 @@ public class AccountApiProfile : Profile
 {
     public AccountApiProfile()
     {
+        CreateMap<PaginatedResult<CustomerModel>, PaginatedResult<CustomerDto>>();
         CreateMap<CustomerModel, CustomerDto>();
 
         CreateMap<AccountModel, AccountDto>()
@@ -16,6 +16,6 @@ public class AccountApiProfile : Profile
             .Include<AccountModel, SavingsAccountDto>();
 
         CreateMap<AccountModel, CurrentAccountDto>();
-        CreateMap<AccountModel, SavingsAccountModel>();
+        CreateMap<AccountModel, SavingsAccountDto>();
     }
 }
