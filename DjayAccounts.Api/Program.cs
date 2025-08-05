@@ -4,6 +4,7 @@ using DjayAccounts.DbPersistence;
 using DjayAccounts.EntityFramework.Contexts;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,7 +37,25 @@ builder.Services
     });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Banking API",
+        Version = "v1",
+        Description = "This API allows managing accounts and customers.",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "Support Team",
+            Email = "wrzucher@gmail.com",
+        },
+    });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    c.UseInlineDefinitionsForEnums();
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

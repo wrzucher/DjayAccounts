@@ -7,11 +7,11 @@ namespace DjayAccounts.Api.Models;
 /// </summary>
 public abstract class CreateAccountDto
 {
-    [Required]
     /// <summary>
     /// Gets or sets a value that uniquely identifies the account.
     /// Provided externally by the client to support idempotency.
     /// </summary>
+    [Required]
     public Guid AccountId { get; set; }
 
     /// <summary>

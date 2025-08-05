@@ -1,6 +1,7 @@
 ﻿using DjayAccounts.DbPersistence.ObjectModels;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace DjayAccounts.Api.Models;
 
@@ -8,8 +9,8 @@ namespace DjayAccounts.Api.Models;
 /// Represents a bank account owned by a customer.
 /// Accounts can be of different types (e.g., Current, Savings).
 /// </summary>
-[KnownType(typeof(CurrentAccountDto))]
-[KnownType(typeof(SavingsAccountDto))]
+[JsonDerivedType(typeof(CurrentAccountDto), typeDiscriminator: "current")]
+[JsonDerivedType(typeof(SavingsAccountDto), typeDiscriminator: "savings")]
 public abstract class AccountDto
 {
     /// <summary>
