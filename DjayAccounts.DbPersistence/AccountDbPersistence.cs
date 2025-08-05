@@ -29,7 +29,7 @@ public class AccountDbPersistence
     /// <summary>
     /// Creates a new customer record.
     /// </summary>
-    public async Task<CustomerModel> CreateCustomerAsync(Guid customerId, string firstName, string lastName)
+    public async Task CreateCustomerAsync(Guid customerId, string firstName, string lastName)
     {
         using var context = new AccountDbContext(_options);
 
@@ -43,19 +43,18 @@ public class AccountDbPersistence
 
         context.Customers.Add(customer);
         await context.SaveChangesAsync();
-
-        return _mapper.Map<CustomerModel>(customer);
     }
 
     /// <summary>
-    /// Creates a new account for a given customer.
+    /// Creates a new current account for a given customer.
     /// </summary>
-    public async Task<AccountModel> CreateAccountAsync(
+    public async Task CreateCurrentAccountAsync(
         Guid accountId,
         Guid customerId,
         AccountType accountType,
         string currency,
-        decimal initialBalance)
+        decimal initialBalance,
+        decimal overdraftLimit)
     {
         using var context = new AccountDbContext(_options);
 
@@ -66,15 +65,42 @@ public class AccountDbPersistence
             AccountType = accountType.ToString().ToUpperInvariant(),
             Currency = currency,
             Balance = initialBalance,
+            OverdraftLimit = overdraftLimit,
             Status = AccountStatus.Active.ToString().ToUpperInvariant(),
             CreatedAt = DateTime.UtcNow
         };
 
         context.Accounts.Add(account);
         await context.SaveChangesAsync();
+    }
 
-        var result = _mapper.Map<AccountModel>(account);
-        return result;
+    /// <summary>
+    /// Creates a new savings account for a given customer.
+    /// </summary>
+    public async Task CreateSavingsAccountAsync(
+        Guid accountId,
+        Guid customerId,
+        AccountType accountType,
+        string currency,
+        decimal initialBalance,
+        decimal interestRate)
+    {
+        using var context = new AccountDbContext(_options);
+
+        var account = new Account
+        {
+            AccountId = accountId,
+            CustomerId = customerId,
+            AccountType = accountType.ToString().ToUpperInvariant(),
+            Currency = currency,
+            Balance = initialBalance,
+            InterestRate = interestRate,
+            Status = AccountStatus.Active.ToString().ToUpperInvariant(),
+            CreatedAt = DateTime.UtcNow
+        };
+
+        context.Accounts.Add(account);
+        await context.SaveChangesAsync();
     }
 
     /// <summary>
@@ -93,22 +119,42 @@ public class AccountDbPersistence
     }
 
     /// <summary>
-    /// Freezes an account by setting its status to FROZEN.
+    /// Freezes an account by account Id.
     /// </summary>
-    public async Task<AccountModel?> FreezeAccountAsync(Guid accountId)
+    public async Task FreezeAccountAsync(Guid accountId)
     {
         using var context = new AccountDbContext(_options);
 
         var account = await context.Accounts
             .FirstOrDefaultAsync(a => a.AccountId == accountId);
-        if (account == null) return null;
+        if (account == null)
+        {
+            throw new InvalidOperationException($"Account with ID {accountId} doesn' found. Account can't be freezen");
+        }
 
         account.Status = AccountStatus.Frozen.ToString().ToUpperInvariant();
         account.FrozenAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
+    }
 
-        var result = _mapper.Map<AccountModel>(account);
-        return result;
+    /// <summary>
+    /// Unfreezes an account by account Id.
+    /// </summary>
+    public async Task UnfreezeAccountAsync(Guid accountId)
+    {
+        using var context = new AccountDbContext(_options);
+
+        var account = await context.Accounts
+            .FirstOrDefaultAsync(a => a.AccountId == accountId);
+        if (account == null)
+        {
+            throw new InvalidOperationException($"Account with ID {accountId} doesn' found. Account can't be unfreezen");
+        }
+
+        account.Status = AccountStatus.Active.ToString().ToUpperInvariant();
+        account.FrozenAt = null;
+
+        await context.SaveChangesAsync();
     }
 }
